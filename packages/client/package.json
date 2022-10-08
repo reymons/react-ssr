@@ -1,9 +1,5 @@
 {
   "name": "@react-ssr/client",
   "version": "1.0.0",
-  "license": "MIT",
-  "dependencies": {},
-  "files": [
-    "./src/App.jsx"
-  ]
+  "license": "MIT"
 }

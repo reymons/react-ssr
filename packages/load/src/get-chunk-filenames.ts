@@ -1,6 +1,12 @@
-export function getChunkFilenames(requests, manifest, includeEntry) {
-  const css = [];
-  const js = [];
+import { Manifest } from "./common";
+
+export function getChunkFilenames(
+  requests: string[],
+  manifest: Manifest,
+  includeEntry?: boolean
+) {
+  const css: string[] = [];
+  const js: string[] = [];
 
   Object.entries(manifest).forEach(([chunkFilename, data]) => {
     const { isEntry, request } = data;

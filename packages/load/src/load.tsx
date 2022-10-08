@@ -1,10 +1,20 @@
-import { useContext, useRef } from "react";
+import { useContext, useRef, ComponentType } from "react";
 import { LoadContext } from "./context";
 
-function load(loader, opts = {}) {
+type Options = {
+  request?: string;
+  loading?: JSX.Element;
+};
+
+type Loader<P> = () => Promise<{ default: ComponentType<P> }>;
+
+function load<P extends object>(loader: Loader<P>, opts: Options = {}) {
   const { request } = opts;
 
-  const state = {
+  const state: {
+    loaded: boolean;
+    module: ComponentType<P> | null;
+  } = {
     loaded: false,
     module: null,
   };
@@ -15,11 +25,11 @@ function load(loader, opts = {}) {
     return module;
   });
 
-  return (props) => {
+  return (props: P) => {
     const ctx = useContext(LoadContext);
-    const component = useRef(null);
+    const component = useRef<ComponentType<P> | null>(null);
 
-    ctx.onRequest(request);
+    ctx.onRequest(request as string);
 
     if (state.loaded && !component.current) {
       component.current = state.module;

@@ -1,14 +1,15 @@
 import path from "path";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import { ManifestPlugin } from "@react-ssr/load";
+import { Configuration } from "webpack";
 import { RemoveLicensePlugin } from "../plugins/remove-license-plugin";
 
-function resolve(dist) {
+function resolve(dist: string) {
   return path.resolve(__dirname, dist);
 }
 
-export const prodConfig = {
-  entry: resolve("../../client/src/index.js"),
+export const prodConfig: Configuration = {
+  entry: resolve("../../client/src/index.tsx"),
   output: {
     path: resolve("../../../dist"),
     filename: "[name].[contenthash].js",
@@ -18,7 +19,7 @@ export const prodConfig = {
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
+        test: /\.(t|j)sx?$/,
         use: [
           {
             loader: "babel-loader",
@@ -51,7 +52,7 @@ export const prodConfig = {
     },
   },
   resolve: {
-    extensions: [".js", ".jsx"],
+    extensions: [".js", ".jsx", ".ts", ".tsx"],
   },
   devtool: false,
 };

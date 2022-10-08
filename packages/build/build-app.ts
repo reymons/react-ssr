@@ -1,6 +1,6 @@
-import webpack from "webpack";
+import webpack, { Configuration } from "webpack";
 
-export const buildApp = function (config) {
+export const buildApp = function (config: Configuration) {
   return new Promise((resolve) => {
     const compiler = webpack(config, (error, stats) => {
       if (error) {
@@ -8,8 +8,8 @@ export const buildApp = function (config) {
         return;
       }
 
-      if (stats.hasErrors()) {
-        stats.toJson().errors.forEach((error) => {
+      if (!stats || stats.hasErrors()) {
+        stats?.toJson().errors?.forEach((error) => {
           console.log(error);
         });
         return;

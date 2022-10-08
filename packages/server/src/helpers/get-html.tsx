@@ -2,14 +2,15 @@ import { App } from "@react-ssr/client/src/App";
 import { getChunkFilenames, LoadProvider } from "@react-ssr/load";
 import { StaticRouter } from "react-router-dom/server";
 import { renderToString } from "react-dom/server";
+import { Request } from "express";
 
-function mapChunks(data, pattern) {
+function mapChunks(data: string[], pattern: string) {
   return data.map((file) => pattern.replace("$file", file)).join("\n");
 }
 
-export function getHtml(req) {
+export function getHtml(req: Request) {
   return new Promise((resolve) => {
-    const requests = [];
+    const requests: string[] = [];
 
     const html = renderToString(
       <StaticRouter location={req.url}>
@@ -19,7 +20,7 @@ export function getHtml(req) {
       </StaticRouter>
     );
 
-    const manifest = require("../../../dist/manifest.json");
+    const manifest = require("../../../../dist/manifest.json");
     const { js, css } = getChunkFilenames(requests, manifest, true);
 
     resolve(`

@@ -17,7 +17,7 @@ async function runServer() {
 
   app.use(compression());
 
-  app.use(express.static(path.resolve(__dirname, "../../dist")));
+  app.use(express.static(path.resolve(__dirname, "../../../dist")));
 
   app.listen(port, () => {
     console.log("The server is running on port " + port);
