@@ -19,9 +19,11 @@ async function runServer() {
 
   app.use(express.static(path.resolve(__dirname, "../../../dist")));
 
-  app.listen(port, () => {
-    console.log("The server is running on port " + port);
-  });
+  if (!process.env.PRE_COMMIT) {
+    app.listen(port, () => {
+      console.log("The server is running on port " + port);
+    });
+  }
 }
 
 runServer();

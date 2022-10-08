@@ -10,19 +10,23 @@
     "./packages/*"
   ],
   "scripts": {
-    "start": "node scripts/start.js"
+    "start": "node scripts/start.js",
+    "test-build": "cross-env PRE_COMMIT=true yarn start"
   },
+  "pre-commit": [
+    "test-build"
+  ],
   "devDependencies": {
     "@babel/core": "^7.19.3",
     "@babel/preset-env": "^7.19.3",
     "@babel/preset-react": "^7.18.6",
     "@babel/preset-typescript": "^7.18.6",
+    "@babel/register": "^7.18.9",
     "@types/react": "^18.0.21",
     "@types/react-dom": "^18.0.6",
-    "babel-loader": "^8.2.5",
-    "babel-types": "^6.26.0",
-    "css-loader": "^6.7.1",
-    "mini-css-extract-plugin": "^2.6.1",
+    "cross-env": "^7.0.3",
+    "ignore-styles": "^5.0.1",
+    "pre-commit": "^1.2.2",
     "typescript": "^4.8.4",
     "webpack": "^5.74.0"
   },
