@@ -1,11 +1,12 @@
 {
   "name": "@react-ssr/build",
   "version": "1.0.0",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "license": "MIT",
   "devDependencies": {
     "babel-loader": "^8.2.5",
     "css-loader": "^6.7.1",
-    "mini-css-extract-plugin": "^2.6.1"
+    "mini-css-extract-plugin": "^2.6.1",
+    "style-loader": "^3.3.1"
   }
 }

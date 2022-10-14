@@ -1,4 +1,4 @@
-import { useContext, useRef, ComponentType } from "react";
+import React, { ComponentType, ContextType } from "react";
 import { LoadContext } from "./context";
 
 type Options = {
@@ -8,37 +8,46 @@ type Options = {
 
 type Loader<P> = () => Promise<{ default: ComponentType<P> }>;
 
+type State<P> = {
+  loadedComponent: ComponentType<P> | null;
+};
+
 function load<P extends object>(loader: Loader<P>, opts: Options = {}) {
-  const { request } = opts;
+  let loadedComponent: ComponentType<P> | null = null;
+  let loading = false;
 
-  const state: {
-    loaded: boolean;
-    module: ComponentType<P> | null;
-  } = {
-    loaded: false,
-    module: null,
-  };
-
-  loader().then((module) => {
-    state.loaded = true;
-    state.module = module.default;
-    return module;
+  const result = loader().then((module) => {
+    loadedComponent = module.default;
+    loading = false;
   });
 
-  return (props: P) => {
-    const ctx = useContext(LoadContext);
-    const component = useRef<ComponentType<P> | null>(null);
+  return class LoadComponent extends React.Component<P, State<P>> {
+    static contextType: typeof LoadContext = LoadContext;
+    context!: ContextType<typeof LoadContext>;
 
-    ctx.onRequest(request as string);
+    state = {
+      loadedComponent,
+    };
 
-    if (state.loaded && !component.current) {
-      component.current = state.module;
+    componentDidMount() {
+      if (!this.state.loadedComponent && !loading) {
+        loading = true;
+
+        result.then(() => {
+          loading = false;
+          this.setState({ loadedComponent });
+        });
+      }
     }
 
-    if (component.current) {
-      return <component.current {...props} />;
-    } else {
-      return <></>;
+    render() {
+      this.context.onRequest(opts.request || "");
+
+      if (this.state.loadedComponent) {
+        return <this.state.loadedComponent {...this.props} />;
+      } else {
+        return <></>;
+      }
     }
   };
 }

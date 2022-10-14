@@ -1,7 +1,7 @@
-import webpack, { Configuration } from "webpack";
+import webpack, { Compiler, Configuration } from "webpack";
 
 export const buildApp = function (config: Configuration) {
-  return new Promise((resolve) => {
+  return new Promise<Compiler>((resolve) => {
     const compiler = webpack(config, (error, stats) => {
       if (error) {
         console.log(error.message);

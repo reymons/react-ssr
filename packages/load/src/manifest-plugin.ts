@@ -26,7 +26,7 @@ function getManifest(compilation: Compilation) {
 
         if (module.rawRequest || isEntry) {
           manifest[file] = {
-            request: module.rawRequest,
+            request: module.rawRequest || "",
             isEntry,
           };
         }

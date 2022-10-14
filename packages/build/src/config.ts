@@ -1,25 +1,32 @@
 import path from "path";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import { ManifestPlugin } from "@react-ssr/load";
-import { Configuration } from "webpack";
-import { RemoveLicensePlugin } from "../plugins/remove-license-plugin";
+import { Configuration, HotModuleReplacementPlugin } from "webpack";
+import { RemoveLicensePlugin } from "./plugins/remove-license-plugin";
+import { EmptyPlugin } from "./plugins/empty-plugin";
 
 function resolve(dist: string) {
   return path.resolve(__dirname, dist);
 }
 
-export const prodConfig: Configuration = {
-  entry: resolve("../../client/src/index.tsx"),
+const isDev = process.env.NODE_ENV === "development";
+const emptyPlugin = new EmptyPlugin();
+
+export const config = {
+  entry: [resolve("../../client/src/index.tsx")],
   output: {
     path: resolve("../../../dist"),
     filename: "[name].[contenthash].js",
     chunkFilename: "[id].[contenthash].js",
     clean: true,
+    publicPath: "/",
+    hotUpdateChunkFilename: ".hot/[id].[fullhash].hot-update.js",
+    hotUpdateMainFilename: ".hot/[fullhash].hot-update.json",
   },
   module: {
     rules: [
       {
-        test: /\.(t|j)sx?$/,
+        test: /\.tsx?$/,
         use: [
           {
             loader: "babel-loader",
@@ -32,7 +39,10 @@ export const prodConfig: Configuration = {
       },
       {
         test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, "css-loader"],
+        use: [
+          isDev ? "style-loader" : MiniCssExtractPlugin.loader,
+          "css-loader",
+        ],
       },
     ],
   },
@@ -43,16 +53,19 @@ export const prodConfig: Configuration = {
       chunkFilename: "[id].[contenthash].css",
     }),
     new RemoveLicensePlugin(),
+    isDev ? new HotModuleReplacementPlugin() : emptyPlugin,
   ],
-  mode: "production",
-  optimization: {
-    splitChunks: {
-      chunks: "all",
-      name: "vendors",
-    },
-  },
+  mode: isDev ? "development" : "production",
   resolve: {
     extensions: [".js", ".jsx", ".ts", ".tsx"],
   },
-  devtool: false,
-};
+  optimization: {
+    splitChunks: isDev
+      ? false
+      : {
+          chunks: "all",
+          name: "vendors",
+        },
+  },
+  devtool: isDev ? "source-map" : false,
+} as Required<Configuration>;

@@ -12,6 +12,6 @@ module.exports = (api) => {
         },
       ],
     ],
-    plugins: ["./babel-plugin-load.js"],
+    plugins: ["./lib/babel-plugin-load.js"],
   };
 };
