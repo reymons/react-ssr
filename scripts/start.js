@@ -3,6 +3,9 @@ require("@babel/register")({
   extensions: [".js", ".jsx", ".ts", ".tsx"],
 });
 
-require("ignore-styles");
+require("css-modules-require-hook")({
+  generateScopedName: require("../lib/get-module-names"),
+  extensions: [".scss"],
+});
 
 require("@react-ssr/server/src");

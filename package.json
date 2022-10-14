@@ -9,10 +9,16 @@
   "workspaces": [
     "./packages/*"
   ],
+  "browserslist": [
+    "last 2 years",
+    ">0.2%",
+    "not ie <= 11",
+    "not dead"
+  ],
   "scripts": {
     "build": "cross-env NODE_ENV=production node scripts/start.js",
     "start": "cross-env NODE_ENV=development nodemon --watch packages/server --ext 'ts, tsx' --ignore packages/server/**/*.test.ts scripts/start.js",
-    "test-build": "cross-env PRE_COMMIT=true yarn start"
+    "test-build": "cross-env PRE_COMMIT=true yarn build"
   },
   "pre-commit": [
     "test-build"
@@ -26,10 +32,17 @@
     "@types/babel__core": "^7.1.19",
     "@types/react": "^18.0.21",
     "@types/react-dom": "^18.0.6",
+    "autoprefixer": "^10.4.12",
+    "babel-plugin-module-resolver": "^4.1.0",
     "cross-env": "^7.0.3",
+    "css-modules-require-hook": "^4.2.3",
+    "generic-names": "^4.0.0",
     "ignore-styles": "^5.0.1",
     "nodemon": "^2.0.20",
+    "postcss": "^8.4.18",
+    "postcss-preset-env": "^7.8.2",
     "pre-commit": "^1.2.2",
+    "sass": "^1.55.0",
     "typescript": "^4.8.4",
     "webpack": "^5.74.0"
   },

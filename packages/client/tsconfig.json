@@ -1,8 +1,18 @@
 {
   "compilerOptions": {
     "jsx": "preserve",
-    "rootDir": "src"
+    "rootDir": "src",
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["./src/components/shared/*"],
+      "@components/*": ["./src/components/*"],
+      "@styles/*": ["./styles/*"],
+      "@screens/*": ["./src/components/screens/*"],
+      "@hooks/*": ["./src/hooks/*"]
+    },
+    "target": "esnext",
+    "module": "esnext"
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "types/**/*"],
   "extends": "../../tsconfig.json"
 }

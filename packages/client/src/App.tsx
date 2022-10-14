@@ -1,13 +1,14 @@
 import { Routes, Route } from "react-router-dom";
 import { load } from "@react-ssr/load";
 import { withHmr } from "./hoc/withHmr";
-import "./App.css";
+import { Header } from "@components/layout/Header";
 
 const Home = load(() => import("./components/screens/Home"));
 
 export const App = withHmr(module)(() => {
   return (
-    <div className="page">
+    <div>
+      <Header />
       <Routes>
         <Route path="/" element={<Home />} />
       </Routes>

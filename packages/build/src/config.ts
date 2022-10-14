@@ -4,18 +4,20 @@ import { ManifestPlugin } from "@react-ssr/load";
 import { Configuration, HotModuleReplacementPlugin } from "webpack";
 import { RemoveLicensePlugin } from "./plugins/remove-license-plugin";
 import { EmptyPlugin } from "./plugins/empty-plugin";
+// @ts-ignore
+import getModuleName from "../../../lib/get-module-names";
 
-function resolve(dist: string) {
-  return path.resolve(__dirname, dist);
+function resolve(dist: string, clientPath = true) {
+  return path.resolve(__dirname, clientPath ? `../../client/${dist}` : dist);
 }
 
 const isDev = process.env.NODE_ENV === "development";
 const emptyPlugin = new EmptyPlugin();
 
-export const config = {
-  entry: [resolve("../../client/src/index.tsx")],
+const configuration: Configuration = {
+  entry: [resolve("src/index.tsx")],
   output: {
-    path: resolve("../../../dist"),
+    path: resolve("../../../dist", false),
     filename: "[name].[contenthash].js",
     chunkFilename: "[id].[contenthash].js",
     clean: true,
@@ -31,17 +33,37 @@ export const config = {
           {
             loader: "babel-loader",
             options: {
-              configFile: resolve("../../../babel.config.js"),
+              configFile: resolve("../../../babel.config.js", false),
             },
           },
         ],
         exclude: /node_modules/,
       },
       {
-        test: /\.css$/,
+        test: /\.scss$/,
         use: [
           isDev ? "style-loader" : MiniCssExtractPlugin.loader,
-          "css-loader",
+          {
+            loader: "css-loader",
+            options: {
+              importLoaders: 2,
+              modules: {
+                getLocalIdent(ctx: any, _: any, name: string) {
+                  return getModuleName(name, ctx.resourcePath);
+                },
+                auto: true,
+              },
+            },
+          },
+          {
+            loader: "postcss-loader",
+            options: {
+              postcssOptions: {
+                config: resolve("../../../postcss.config.js", false),
+              },
+            },
+          },
+          "sass-loader",
         ],
       },
     ],
@@ -68,4 +90,6 @@ export const config = {
         },
   },
   devtool: isDev ? "source-map" : false,
-} as Required<Configuration>;
+};
+
+export const config = configuration as Required<Configuration>;

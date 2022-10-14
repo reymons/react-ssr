@@ -1,3 +1,7 @@
+function clientPath(dist) {
+  return `./packages/client/${dist}`;
+}
+
 module.exports = (api) => {
   api.cache(true);
 
@@ -12,6 +16,20 @@ module.exports = (api) => {
         },
       ],
     ],
-    plugins: ["./lib/babel-plugin-load.js"],
+    plugins: [
+      "./lib/babel-plugin-load.js",
+      [
+        "module-resolver",
+        {
+          alias: {
+            "@shared": clientPath("src/components/shared"),
+            "@components": clientPath("src/components"),
+            "@styles": clientPath("styles"),
+            "@screens": clientPath("src/components/screens"),
+            "@hooks": clientPath("src/hooks"),
+          },
+        },
+      ],
+    ],
   };
 };
