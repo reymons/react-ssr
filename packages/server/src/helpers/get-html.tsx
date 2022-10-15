@@ -34,6 +34,9 @@ export function getHtml(req: Request) {
           ${mapChunks(css, "<link href='$file' rel='stylesheet' />")}
         </head>
         <body>
+          <script>
+            document.body.style.setProperty("--100vh", window.innerHeight + "px");
+          </script>
           <div id="root">${html}</div>
         </body>
       </html>

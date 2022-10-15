@@ -14,11 +14,6 @@ async function runServer() {
 
   const compiler = await buildApp(config);
 
-  app.get("^(/|/cars)$", async (req, res) => {
-    const html = await getHtml(req);
-    res.send(html);
-  });
-
   const wss = new WebSocket.server({
     httpServer: server,
     autoAcceptConnections: false,
@@ -59,6 +54,11 @@ async function runServer() {
   }
 
   app.use(express.static(path.resolve(__dirname, "../../../dist")));
+
+  app.get("*", async (req, res) => {
+    const html = await getHtml(req);
+    res.send(html);
+  });
 
   if (!process.env.PRE_COMMIT) {
     server.listen(port, () => {

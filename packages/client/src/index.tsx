@@ -3,6 +3,7 @@ import { hydrateRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { App } from "./App";
 import { ws } from "./store/ws";
+import "@styles/fonts.scss";
 import "@styles/reset.scss";
 
 hydrateRoot(

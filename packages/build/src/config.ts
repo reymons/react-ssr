@@ -1,7 +1,11 @@
 import path from "path";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import { ManifestPlugin } from "@react-ssr/load";
-import { Configuration, HotModuleReplacementPlugin } from "webpack";
+import {
+  Configuration,
+  HotModuleReplacementPlugin,
+  NormalModule,
+} from "webpack";
 import { RemoveLicensePlugin } from "./plugins/remove-license-plugin";
 import { EmptyPlugin } from "./plugins/empty-plugin";
 // @ts-ignore
@@ -13,6 +17,8 @@ function resolve(dist: string, clientPath = true) {
 
 const isDev = process.env.NODE_ENV === "development";
 const emptyPlugin = new EmptyPlugin();
+const fontRegExp = /\.(woff2?|ttf|otf)$/;
+const imgRegExp = /\.(png|jpe?g|gif|webp|avif)$/;
 
 const configuration: Configuration = {
   entry: [resolve("src/index.tsx")],
@@ -24,6 +30,20 @@ const configuration: Configuration = {
     publicPath: "/",
     hotUpdateChunkFilename: ".hot/[id].[fullhash].hot-update.js",
     hotUpdateMainFilename: ".hot/[fullhash].hot-update.json",
+    assetModuleFilename(data) {
+      if (!data.module) return "";
+
+      let request = (data.module as NormalModule).rawRequest;
+      let pathToFile = "[name][ext]";
+
+      if (fontRegExp.test(request)) {
+        pathToFile = "fonts/[name][ext]";
+      } else if (imgRegExp.test(request)) {
+        pathToFile = "images/[hash][ext]";
+      }
+
+      return pathToFile;
+    },
   },
   module: {
     rules: [
@@ -63,8 +83,19 @@ const configuration: Configuration = {
               },
             },
           },
-          "sass-loader",
+          {
+            loader: "sass-loader",
+            options: {
+              additionalData: `
+                @import "@styles/variables";
+              `,
+            },
+          },
         ],
+      },
+      {
+        test: imgRegExp,
+        type: "asset/resource",
       },
     ],
   },
@@ -80,6 +111,10 @@ const configuration: Configuration = {
   mode: isDev ? "development" : "production",
   resolve: {
     extensions: [".js", ".jsx", ".ts", ".tsx"],
+    alias: {
+      "@styles": resolve("styles"),
+    },
+    modules: ["node_modules", resolve("public")],
   },
   optimization: {
     splitChunks: isDev

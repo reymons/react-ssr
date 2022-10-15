@@ -18,6 +18,7 @@ module.exports = (api) => {
     ],
     plugins: [
       "./lib/babel-plugin-load.js",
+      "./lib/babel-plugin-file-loader.js",
       [
         "module-resolver",
         {
@@ -27,6 +28,7 @@ module.exports = (api) => {
             "@styles": clientPath("styles"),
             "@screens": clientPath("src/components/screens"),
             "@hooks": clientPath("src/hooks"),
+            "@dictionaries": clientPath("src/dictionaries"),
           },
         },
       ],
