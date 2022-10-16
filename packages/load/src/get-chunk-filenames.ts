@@ -7,18 +7,30 @@ export function getChunkFilenames(
 ) {
   const css: string[] = [];
   const js: string[] = [];
+  /** Create cache to prevent double adding
+   * of the same filename to js / css array **/
+  const cache: Record<string, boolean> = {};
 
-  Object.entries(manifest).forEach(([chunkFilename, data]) => {
-    const { isEntry, request } = data;
+  for (const request in manifest) {
+    const chunks = manifest[request];
+    const hasRequest = requests.includes(request);
 
-    if (requests.includes(request) || (includeEntry && isEntry)) {
-      if (/\.m?js$/.test(chunkFilename)) {
-        js.push(chunkFilename);
-      } else if (/\.css$/.test(chunkFilename)) {
-        css.push(chunkFilename);
+    chunks.forEach(({ isEntry, filename }) => {
+      if (cache[filename]) {
+        return;
       }
-    }
-  });
+
+      cache[filename] = true;
+
+      if (hasRequest || (isEntry && includeEntry)) {
+        if (/\.m?js$/.test(filename)) {
+          js.push(filename);
+        } else if (/\.css$/.test(filename)) {
+          css.push(filename);
+        }
+      }
+    });
+  }
 
   return { css, js };
 }

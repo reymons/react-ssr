@@ -1,7 +1,6 @@
-export type Manifest = Record<
-  string,
-  {
-    request: string;
-    isEntry: boolean;
-  }
->;
+type Chunk = {
+  filename: string;
+  isEntry: boolean;
+};
+
+export type Manifest = Record<string, Chunk[]>;

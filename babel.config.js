@@ -1,6 +1,4 @@
-function clientPath(dist) {
-  return `./packages/client/${dist}`;
-}
+const resolvers = require("./lib/resolvers");
 
 module.exports = (api) => {
   api.cache(true);
@@ -18,18 +16,17 @@ module.exports = (api) => {
     ],
     plugins: [
       "./lib/babel-plugin-load.js",
-      "./lib/babel-plugin-file-loader.js",
+      [
+        "./lib/babel-plugin-file-loader.js",
+        {
+          isWebpack: false,
+        },
+      ],
       [
         "module-resolver",
         {
-          alias: {
-            "@shared": clientPath("src/components/shared"),
-            "@components": clientPath("src/components"),
-            "@styles": clientPath("styles"),
-            "@screens": clientPath("src/components/screens"),
-            "@hooks": clientPath("src/hooks"),
-            "@dictionaries": clientPath("src/dictionaries"),
-          },
+          extensions: [".ts", ".tsx"],
+          alias: resolvers.client,
         },
       ],
     ],

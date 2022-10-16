@@ -8,8 +8,10 @@ import {
 } from "webpack";
 import { RemoveLicensePlugin } from "./plugins/remove-license-plugin";
 import { EmptyPlugin } from "./plugins/empty-plugin";
-// @ts-ignore
 import getModuleName from "../../../lib/get-module-names";
+import getAssetName from "../../../lib/get-asset-name";
+import dict from "../../../lib/dict";
+import resolvers from "../../../lib/resolvers";
 
 function resolve(dist: string, clientPath = true) {
   return path.resolve(__dirname, clientPath ? `../../client/${dist}` : dist);
@@ -17,8 +19,6 @@ function resolve(dist: string, clientPath = true) {
 
 const isDev = process.env.NODE_ENV === "development";
 const emptyPlugin = new EmptyPlugin();
-const fontRegExp = /\.(woff2?|ttf|otf)$/;
-const imgRegExp = /\.(png|jpe?g|gif|webp|avif)$/;
 
 const configuration: Configuration = {
   entry: [resolve("src/index.tsx")],
@@ -30,19 +30,15 @@ const configuration: Configuration = {
     publicPath: "/",
     hotUpdateChunkFilename: ".hot/[id].[fullhash].hot-update.js",
     hotUpdateMainFilename: ".hot/[fullhash].hot-update.json",
-    assetModuleFilename(data) {
-      if (!data.module) return "";
+    assetModuleFilename(pathData) {
+      let filename = "";
 
-      let request = (data.module as NormalModule).rawRequest;
-      let pathToFile = "[name][ext]";
-
-      if (fontRegExp.test(request)) {
-        pathToFile = "fonts/[name][ext]";
-      } else if (imgRegExp.test(request)) {
-        pathToFile = "images/[hash][ext]";
+      if (pathData.module) {
+        const { request } = pathData.module as NormalModule;
+        filename = getAssetName(request);
       }
 
-      return pathToFile;
+      return filename;
     },
   },
   module: {
@@ -54,6 +50,14 @@ const configuration: Configuration = {
             loader: "babel-loader",
             options: {
               configFile: resolve("../../../babel.config.js", false),
+              plugins: [
+                [
+                  resolve("../../../lib/babel-plugin-file-loader.js", false),
+                  {
+                    isWebpack: true,
+                  },
+                ],
+              ],
             },
           },
         ],
@@ -94,7 +98,7 @@ const configuration: Configuration = {
         ],
       },
       {
-        test: imgRegExp,
+        test: dict.imgRegExp,
         type: "asset/resource",
       },
     ],
@@ -111,9 +115,7 @@ const configuration: Configuration = {
   mode: isDev ? "development" : "production",
   resolve: {
     extensions: [".js", ".jsx", ".ts", ".tsx"],
-    alias: {
-      "@styles": resolve("styles"),
-    },
+    alias: resolvers.client,
     modules: ["node_modules", resolve("public")],
   },
   optimization: {

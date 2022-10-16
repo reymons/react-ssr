@@ -20,16 +20,20 @@ function getManifest(compilation: Compilation) {
   });
 
   compilation.chunks.forEach((chunk) => {
-    compilation.chunkGraph.getChunkModules(chunk).forEach((module: any) => {
-      chunk.files.forEach((file) => {
-        const isEntry = entrypointFilenames.includes(file);
+    chunk.files.forEach((file) => {
+      compilation.chunkGraph.getChunkModules(chunk).forEach((module: any) => {
+        const request = module.rawRequest;
 
-        if (module.rawRequest || isEntry) {
-          manifest[file] = {
-            request: module.rawRequest || "",
-            isEntry,
-          };
+        if (!request) return;
+
+        if (!manifest[request]) {
+          manifest[request] = [];
         }
+
+        manifest[request].push({
+          filename: file,
+          isEntry: entrypointFilenames.includes(file),
+        });
       });
     });
   });
