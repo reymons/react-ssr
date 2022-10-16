@@ -2,7 +2,7 @@ const path = require("path");
 const crypto = require("crypto");
 const genericNames = require("generic-names");
 
-global.__resolve__root__ = function (...dist) {
+global.__resolve_root__ = function (...dist) {
   return path.resolve(".", ...dist);
 };
 

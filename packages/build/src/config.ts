@@ -19,7 +19,7 @@ const configuration: Configuration = {
     path: __resolve_dist__(),
     filename: "[name].[contenthash].js",
     chunkFilename: path.join(chunksPath.js, "[id].[contenthash].js"),
-    clean: false,
+    clean: true,
     publicPath: "/",
     hotUpdateChunkFilename: ".hot/[id].[fullhash].hot-update.js",
     hotUpdateMainFilename: ".hot/[fullhash].hot-update.json",
@@ -42,10 +42,10 @@ const configuration: Configuration = {
           {
             loader: "babel-loader",
             options: {
-              configFile: __resolve__root__("babel.config.js"),
+              configFile: __resolve_root__("babel.config.js"),
               plugins: [
                 [
-                  __resolve__root__("lib/babel-plugin-file-loader.js"),
+                  __resolve_root__("lib/babel-plugin-file-loader.js"),
                   {
                     isWebpack: true,
                   },
@@ -76,7 +76,7 @@ const configuration: Configuration = {
             loader: "postcss-loader",
             options: {
               postcssOptions: {
-                config: __resolve__root__("postcss.config.js"),
+                config: __resolve_root__("postcss.config.js"),
               },
             },
           },
