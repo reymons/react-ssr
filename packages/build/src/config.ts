@@ -8,25 +8,18 @@ import {
 } from "webpack";
 import { RemoveLicensePlugin } from "./plugins/remove-license-plugin";
 import { EmptyPlugin } from "./plugins/empty-plugin";
-import getModuleName from "../../../lib/get-module-names";
-import getAssetName from "../../../lib/get-asset-name";
-import dict from "../../../lib/dict";
-import resolvers from "../../../lib/resolvers";
-
-function resolve(dist: string, clientPath = true) {
-  return path.resolve(__dirname, clientPath ? `../../client/${dist}` : dist);
-}
 
 const isDev = process.env.NODE_ENV === "development";
 const emptyPlugin = new EmptyPlugin();
+const { chunksPath, regExp, resolvers } = __config__;
 
 const configuration: Configuration = {
-  entry: [resolve("src/index.tsx")],
+  entry: __resolve_client__("src/index.tsx"),
   output: {
-    path: resolve("../../../dist", false),
+    path: __resolve_dist__(),
     filename: "[name].[contenthash].js",
-    chunkFilename: "[id].[contenthash].js",
-    clean: true,
+    chunkFilename: path.join(chunksPath.js, "[id].[contenthash].js"),
+    clean: false,
     publicPath: "/",
     hotUpdateChunkFilename: ".hot/[id].[fullhash].hot-update.js",
     hotUpdateMainFilename: ".hot/[fullhash].hot-update.json",
@@ -35,7 +28,7 @@ const configuration: Configuration = {
 
       if (pathData.module) {
         const { request } = pathData.module as NormalModule;
-        filename = getAssetName(request);
+        filename = __asset_name__(request);
       }
 
       return filename;
@@ -49,10 +42,10 @@ const configuration: Configuration = {
           {
             loader: "babel-loader",
             options: {
-              configFile: resolve("../../../babel.config.js", false),
+              configFile: __resolve__root__("babel.config.js"),
               plugins: [
                 [
-                  resolve("../../../lib/babel-plugin-file-loader.js", false),
+                  __resolve__root__("lib/babel-plugin-file-loader.js"),
                   {
                     isWebpack: true,
                   },
@@ -73,7 +66,7 @@ const configuration: Configuration = {
               importLoaders: 2,
               modules: {
                 getLocalIdent(ctx: any, _: any, name: string) {
-                  return getModuleName(name, ctx.resourcePath);
+                  return __css_module_name__(name, ctx.resourcePath);
                 },
                 auto: true,
               },
@@ -83,7 +76,7 @@ const configuration: Configuration = {
             loader: "postcss-loader",
             options: {
               postcssOptions: {
-                config: resolve("../../../postcss.config.js", false),
+                config: __resolve__root__("postcss.config.js"),
               },
             },
           },
@@ -98,7 +91,7 @@ const configuration: Configuration = {
         ],
       },
       {
-        test: dict.imgRegExp,
+        test: regExp.image,
         type: "asset/resource",
       },
     ],
@@ -107,7 +100,7 @@ const configuration: Configuration = {
     new ManifestPlugin({ filename: "manifest.json" }),
     new MiniCssExtractPlugin({
       filename: "[name].[contenthash].css",
-      chunkFilename: "[id].[contenthash].css",
+      chunkFilename: path.join(chunksPath.css, "[id].[contenthash].css"),
     }),
     new RemoveLicensePlugin(),
     isDev ? new HotModuleReplacementPlugin() : emptyPlugin,
@@ -116,7 +109,7 @@ const configuration: Configuration = {
   resolve: {
     extensions: [".js", ".jsx", ".ts", ".tsx"],
     alias: resolvers.client,
-    modules: ["node_modules", resolve("public")],
+    modules: ["node_modules", __resolve_client__("public")],
   },
   optimization: {
     splitChunks: isDev

@@ -1,0 +1,6 @@
+{
+  "name": "@types/react__ssr",
+  "version": "1.0.0",
+  "main": "index.d.ts",
+  "license": "MIT"
+}

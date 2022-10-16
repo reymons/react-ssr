@@ -40,6 +40,8 @@ async function runServer() {
     });
   };
 
+  app.use(express.static(__resolve_dist__()));
+
   if (isDev) {
     let prevHash = "";
 
@@ -52,8 +54,6 @@ async function runServer() {
   } else {
     app.use(compression());
   }
-
-  app.use(express.static(path.resolve(__dirname, "../../../dist")));
 
   app.get("*", async (req, res) => {
     const html = await getHtml(req);

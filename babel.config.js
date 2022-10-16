@@ -1,5 +1,3 @@
-const resolvers = require("./lib/resolvers");
-
 module.exports = (api) => {
   api.cache(true);
 
@@ -26,7 +24,7 @@ module.exports = (api) => {
         "module-resolver",
         {
           extensions: [".ts", ".tsx"],
-          alias: resolvers.client,
+          alias: __config__.resolvers.client,
         },
       ],
     ],
