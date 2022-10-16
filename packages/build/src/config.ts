@@ -20,7 +20,7 @@ const configuration: Configuration = {
     filename: "[name].[contenthash].js",
     chunkFilename: path.join(chunksPath.js, "[id].[contenthash].js"),
     clean: true,
-    publicPath: "/",
+    publicPath: "",
     hotUpdateChunkFilename: ".hot/[id].[fullhash].hot-update.js",
     hotUpdateMainFilename: ".hot/[fullhash].hot-update.json",
     assetModuleFilename(pathData) {
