@@ -9,7 +9,8 @@
       "@styles/*": ["./styles/*"],
       "@screens/*": ["./src/components/screens/*"],
       "@hooks/*": ["./src/hooks/*"],
-      "@dictionaries/*": ["./src/dictionaries/*"]
+      "@dictionaries/*": ["./src/dictionaries/*"],
+      "@utils/*": ["./src/utils/*"]
     },
     "target": "esnext",
     "module": "esnext"

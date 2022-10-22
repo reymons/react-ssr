@@ -69,6 +69,7 @@ global.__config__ = {
       "@hooks": __resolve_client__("src/hooks"),
       "@dictionaries": __resolve_client__("src/dictionaries"),
       "@styles": __resolve_client__("styles"),
+      "@utils": __resolve_client__("src/utils"),
     },
   },
   regExp: {
